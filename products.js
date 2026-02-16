@@ -184,12 +184,12 @@ const PRODUCTS = [
 const PRE_CURATED_CARTS = [
     {
         id: "weekend-essentials",
-        name: \"Women's Weekend Essentials\",
-        description: \"Easy, polished staples for casual plans.\",
+        name: "Women's Weekend Essentials",
+        description: "Easy, polished staples for casual plans.",
         total: 236,
         items: 5,
         stores: 3,
-        productIds: [\"everlane-womens-crew\", \"levis-womens-501\", \"adidas-samba-unisex\"],
+        productIds: ["everlane-womens-crew", "levis-womens-501", "adidas-samba-unisex"],
         images: [
             "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=300&h=300&fit=crop",
             "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=300&h=300&fit=crop",
