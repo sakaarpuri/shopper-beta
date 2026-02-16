@@ -19,6 +19,8 @@ function checkPassword() {
 if (localStorage.getItem('sa_beta_access') === 'true') {
     document.getElementById('passwordGate').classList.add('hidden');
     document.getElementById('app').style.display = 'block';
+    // Important: still initialize the app when bypassing the password gate
+    initApp();
 }
 
 if (document.getElementById('passwordInput')) {
