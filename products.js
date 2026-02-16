@@ -1,6 +1,3 @@
-// Product Catalog with Vision-Based Scores
-// In production, these scores are generated via GPT-4V API
-
 const PRODUCTS = [
     {
         id: "everlane-oxford-navy",
@@ -8,16 +5,11 @@ const PRODUCTS = [
         brand: "Everlane",
         retailer: "Everlane",
         price: 68,
+        category: "tops",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300&h=300&fit=crop",
         cartUrl: "https://everlane.com/products/mens-oxford-shirt",
-        scores: {
-            minimalist: 95,
-            business: 80,
-            casual: 70,
-            luxury: 60,
-            streetwear: 30,
-            vintage: 40
-        }
+        scores: {minimalist: 95, business: 80, casual: 70, luxury: 60, streetwear: 30, vintage: 40}
     },
     {
         id: "apc-chinos-charcoal",
@@ -25,16 +17,11 @@ const PRODUCTS = [
         brand: "A.P.C.",
         retailer: "Mr Porter",
         price: 128,
+        category: "bottoms",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?w=300&h=300&fit=crop",
         cartUrl: "https://www.mrporter.com/mens/product/apc/slim-fit-cotton-chinos",
-        scores: {
-            minimalist: 90,
-            business: 85,
-            casual: 75,
-            luxury: 70,
-            streetwear: 35,
-            vintage: 45
-        }
+        scores: {minimalist: 90, business: 85, casual: 75, luxury: 70, streetwear: 35, vintage: 45}
     },
     {
         id: "cp-achilles-white",
@@ -42,16 +29,11 @@ const PRODUCTS = [
         brand: "Common Projects",
         retailer: "SSENSE",
         price: 165,
+        category: "shoes",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&h=300&fit=crop",
         cartUrl: "https://www.ssense.com/men/product/common-projects/white-achilles-low-sneakers",
-        scores: {
-            minimalist: 98,
-            business: 75,
-            casual: 85,
-            luxury: 90,
-            streetwear: 60,
-            vintage: 50
-        }
+        scores: {minimalist: 98, business: 75, casual: 85, luxury: 90, streetwear: 60, vintage: 50}
     },
     {
         id: "nike-tech-fleece",
@@ -59,16 +41,11 @@ const PRODUCTS = [
         brand: "Nike",
         retailer: "Nike",
         price: 120,
+        category: "outerwear",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=300&fit=crop",
         cartUrl: "https://www.nike.com/t/tech-fleece-jacket",
-        scores: {
-            minimalist: 65,
-            business: 30,
-            casual: 95,
-            luxury: 50,
-            streetwear: 90,
-            vintage: 40
-        }
+        scores: {minimalist: 65, business: 30, casual: 95, luxury: 50, streetwear: 90, vintage: 40}
     },
     {
         id: "taylor-stitch-oxford",
@@ -76,16 +53,11 @@ const PRODUCTS = [
         brand: "Taylor Stitch",
         retailer: "Taylor Stitch",
         price: 98,
+        category: "tops",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1598032895397-b9472444bf93?w=300&h=300&fit=crop",
         cartUrl: "https://www.taylorstitch.com/the-jack-shirt",
-        scores: {
-            minimalist: 85,
-            business: 75,
-            casual: 80,
-            luxury: 70,
-            streetwear: 40,
-            vintage: 60
-        }
+        scores: {minimalist: 85, business: 75, casual: 80, luxury: 70, streetwear: 40, vintage: 60}
     },
     {
         id: "uniqlo-u-tee",
@@ -93,16 +65,11 @@ const PRODUCTS = [
         brand: "Uniqlo U",
         retailer: "Uniqlo",
         price: 15,
+        category: "tops",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=300&h=300&fit=crop",
         cartUrl: "https://www.uniqlo.com/crew-neck-t-shirt",
-        scores: {
-            minimalist: 90,
-            business: 40,
-            casual: 95,
-            luxury: 30,
-            streetwear: 70,
-            vintage: 50
-        }
+        scores: {minimalist: 90, business: 40, casual: 95, luxury: 30, streetwear: 70, vintage: 50}
     },
     {
         id: "acne-studios-jeans",
@@ -110,16 +77,11 @@ const PRODUCTS = [
         brand: "Acne Studios",
         retailer: "SSENSE",
         price: 240,
+        category: "bottoms",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300&h=300&fit=crop",
         cartUrl: "https://www.ssense.com/men/product/acne-studios/river-jeans",
-        scores: {
-            minimalist: 88,
-            business: 60,
-            casual: 85,
-            luxury: 85,
-            streetwear: 75,
-            vintage: 55
-        }
+        scores: {minimalist: 88, business: 60, casual: 85, luxury: 85, streetwear: 75, vintage: 55}
     },
     {
         id: "new-balance-550",
@@ -127,16 +89,11 @@ const PRODUCTS = [
         brand: "New Balance",
         retailer: "New Balance",
         price: 110,
+        category: "shoes",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=300&fit=crop",
         cartUrl: "https://www.newbalance.com/550",
-        scores: {
-            minimalist: 70,
-            business: 25,
-            casual: 90,
-            luxury: 50,
-            streetwear: 95,
-            vintage: 80
-        }
+        scores: {minimalist: 70, business: 25, casual: 90, luxury: 50, streetwear: 95, vintage: 80}
     },
     {
         id: "suitSupply-blazer",
@@ -144,16 +101,11 @@ const PRODUCTS = [
         brand: "Suitsupply",
         retailer: "Suitsupply",
         price: 399,
+        category: "outerwear",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&h=300&fit=crop",
         cartUrl: "https://suitsupply.com/havana-blazer",
-        scores: {
-            minimalist: 80,
-            business: 98,
-            casual: 50,
-            luxury: 90,
-            streetwear: 20,
-            vintage: 60
-        }
+        scores: {minimalist: 80, business: 98, casual: 50, luxury: 90, streetwear: 20, vintage: 60}
     },
     {
         id: "stussy-hoodie",
@@ -161,16 +113,11 @@ const PRODUCTS = [
         brand: "Stussy",
         retailer: "SSENSE",
         price: 95,
+        category: "tops",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=300&h=300&fit=crop",
         cartUrl: "https://www.ssense.com/men/product/stussy/stock-logo-hoodie",
-        scores: {
-            minimalist: 45,
-            business: 15,
-            casual: 85,
-            luxury: 40,
-            streetwear: 98,
-            vintage: 70
-        }
+        scores: {minimalist: 45, business: 15, casual: 85, luxury: 40, streetwear: 98, vintage: 70}
     },
     {
         id: "cos-merino-sweater",
@@ -178,16 +125,11 @@ const PRODUCTS = [
         brand: "COS",
         retailer: "COS",
         price: 89,
+        category: "tops",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=300&h=300&fit=crop",
         cartUrl: "https://www.cos.com/merino-wool-sweater",
-        scores: {
-            minimalist: 95,
-            business: 85,
-            casual: 75,
-            luxury: 80,
-            streetwear: 30,
-            vintage: 50
-        }
+        scores: {minimalist: 95, business: 85, casual: 75, luxury: 80, streetwear: 30, vintage: 50}
     },
     {
         id: "nike-dunk-panda",
@@ -195,20 +137,14 @@ const PRODUCTS = [
         brand: "Nike",
         retailer: "Nike",
         price: 115,
+        category: "shoes",
+        gender: "mens",
         image: "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=300&h=300&fit=crop",
         cartUrl: "https://www.nike.com/dunk-low-panda",
-        scores: {
-            minimalist: 75,
-            business: 20,
-            casual: 90,
-            luxury: 55,
-            streetwear: 95,
-            vintage: 60
-        }
+        scores: {minimalist: 75, business: 20, casual: 90, luxury: 55, streetwear: 95, vintage: 60}
     }
 ];
 
-// Pre-curated carts
 const PRE_CURATED_CARTS = [
     {
         id: "weekend-essentials",
