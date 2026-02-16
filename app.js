@@ -1,6 +1,5 @@
-// ShopperAgent MVP v2 - With Quick Shop Flow
+// ShopperAgent MVP v2 - With Quick Shop Flow (Fixed)
 
-// Password protection
 const BETA_PASSWORD = 'shopper2026';
 
 function checkPassword() {
@@ -30,6 +29,7 @@ if (document.getElementById('passwordInput')) {
 
 // State
 let quickShopPrefs = {
+    gender: '',
     categories: [],
     sizes: {},
     styles: [],
@@ -37,29 +37,21 @@ let quickShopPrefs = {
 };
 
 let userProfile = {
+    gender: '',
     styles: [],
     budget: 100,
     sizes: {}
 };
 
-// Initialize
 function initApp() {
     loadProfile();
     renderPreCarts();
-    initDemoCart();
 }
 
-// Demo Cart Animation
-function initDemoCart() {
-    // Demo cart is already visible
-    // Animation runs when user clicks "Shop For Me"
-}
-
-// Quick Shop Modal
 function openQuickShop() {
     document.getElementById('quickShopModal').classList.add('active');
-    // Reset selections
-    quickShopPrefs = {categories: [], sizes: {}, styles: [], budget: 100};
+    quickShopPrefs = {gender: '', categories: [], sizes: {}, styles: [], budget: 100};
+    document.querySelectorAll('#quickShopModal .gender-option').forEach(el => el.classList.remove('selected'));
     document.querySelectorAll('#quickShopModal .category-option').forEach(el => el.classList.remove('selected'));
     document.querySelectorAll('#quickShopModal .style-option').forEach(el => el.classList.remove('selected'));
     document.getElementById('sizeSection').style.display = 'none';
@@ -71,18 +63,17 @@ function closeQuickShop() {
     document.getElementById('quickShopModal').classList.remove('active');
 }
 
-// Profile Modal
 function openProfileModal() {
     document.getElementById('profileModal').classList.add('active');
-    // Load saved profile into UI
     if (userProfile.budget) {
         document.getElementById('profileBudgetSlider').value = userProfile.budget;
         document.getElementById('profileBudgetDisplay').textContent = '$' + userProfile.budget;
     }
+    document.querySelectorAll('#profileModal .gender-option').forEach(el => {
+        if (userProfile.gender === el.dataset.gender) el.classList.add('selected');
+    });
     document.querySelectorAll('#profileModal .style-option').forEach(el => {
-        if (userProfile.styles.includes(el.dataset.pstyle)) {
-            el.classList.add('selected');
-        }
+        if (userProfile.styles.includes(el.dataset.pstyle)) el.classList.add('selected');
     });
 }
 
@@ -90,29 +81,37 @@ function closeProfileModal() {
     document.getElementById('profileModal').classList.remove('active');
 }
 
-// Toggle category selection
+function toggleGender(el) {
+    document.querySelectorAll('#quickShopModal .gender-option').forEach(btn => btn.classList.remove('selected'));
+    el.classList.add('selected');
+    quickShopPrefs.gender = el.dataset.gender;
+}
+
+function toggleProfileGender(el) {
+    document.querySelectorAll('#profileModal .gender-option').forEach(btn => btn.classList.remove('selected'));
+    el.classList.add('selected');
+    userProfile.gender = el.dataset.gender;
+}
+
 function toggleCategory(el) {
     el.classList.toggle('selected');
     const cat = el.dataset.cat;
     
     if (el.classList.contains('selected')) {
-        if (!quickShopPrefs.categories.includes(cat)) {
-            quickShopPrefs.categories.push(cat);
-        }
+        if (!quickShopPrefs.categories.includes(cat)) quickShopPrefs.categories.push(cat);
     } else {
         quickShopPrefs.categories = quickShopPrefs.categories.filter(c => c !== cat);
     }
     
-    // Show sizes if categories selected
     if (quickShopPrefs.categories.length > 0 && !quickShopPrefs.categories.includes('all')) {
         showSizeOptions();
     } else if (quickShopPrefs.categories.includes('all')) {
-        // For "Complete Look", show all size options
         showAllSizeOptions();
+    } else {
+        document.getElementById('sizeSection').style.display = 'none';
     }
 }
 
-// Show size options based on selected categories
 function showSizeOptions() {
     const section = document.getElementById('sizeSection');
     const grid = document.getElementById('sizeGrid');
@@ -133,10 +132,12 @@ function showSizeOptions() {
     } else if (quickShopPrefs.categories.includes('shoes')) {
         sizes = ['8', '9', '10', '11', '12', '13'];
         labelText = 'Select your shoe size';
+    } else {
+        section.style.display = 'none';
+        return;
     }
     
     label.textContent = labelText;
-    
     sizes.forEach(size => {
         const btn = document.createElement('div');
         btn.className = 'size-option';
@@ -153,10 +154,9 @@ function showAllSizeOptions() {
     
     section.style.display = 'block';
     grid.innerHTML = '';
-    label.textContent = 'Select your general size (we\'ll use this for all items)';
+    label.textContent = 'Select your general size';
     
-    const sizes = ['S', 'M', 'L', 'XL'];
-    sizes.forEach(size => {
+    ['S', 'M', 'L', 'XL'].forEach(size => {
         const btn = document.createElement('div');
         btn.className = 'size-option';
         btn.textContent = size;
@@ -171,15 +171,11 @@ function selectSize(el, size) {
     quickShopPrefs.sizes.general = size;
 }
 
-// Toggle style selection
 function toggleStyle(el) {
     el.classList.toggle('selected');
     const style = el.dataset.style;
-    
     if (el.classList.contains('selected')) {
-        if (!quickShopPrefs.styles.includes(style)) {
-            quickShopPrefs.styles.push(style);
-        }
+        if (!quickShopPrefs.styles.includes(style)) quickShopPrefs.styles.push(style);
     } else {
         quickShopPrefs.styles = quickShopPrefs.styles.filter(s => s !== style);
     }
@@ -188,17 +184,13 @@ function toggleStyle(el) {
 function toggleProfileStyle(el) {
     el.classList.toggle('selected');
     const style = el.dataset.pstyle;
-    
     if (el.classList.contains('selected')) {
-        if (!userProfile.styles.includes(style)) {
-            userProfile.styles.push(style);
-        }
+        if (!userProfile.styles.includes(style)) userProfile.styles.push(style);
     } else {
         userProfile.styles = userProfile.styles.filter(s => s !== style);
     }
 }
 
-// Budget sliders
 function updateBudget(value) {
     quickShopPrefs.budget = parseInt(value);
     document.getElementById('budgetDisplay').textContent = '$' + value;
@@ -209,8 +201,11 @@ function updateProfileBudget(value) {
     document.getElementById('profileBudgetDisplay').textContent = '$' + value;
 }
 
-// Shop For Me - Main Action
 function shopForMe() {
+    if (!quickShopPrefs.gender) {
+        alert('Please select your gender');
+        return;
+    }
     if (quickShopPrefs.categories.length === 0) {
         alert('Please select at least one category');
         return;
@@ -222,22 +217,23 @@ function shopForMe() {
     
     closeQuickShop();
     
-    // Show animation
+    // Hide demo, reset summary, show animation
     document.getElementById('demoCart').style.display = 'none';
     document.getElementById('generatedCart').classList.remove('active');
+    document.getElementById('generatedCart').innerHTML = '';
+    document.getElementById('itemCount').textContent = '-';
+    document.getElementById('storeCount').textContent = '-';
+    document.getElementById('cartTotal').textContent = '$--';
     document.getElementById('cartAnimation').classList.add('active');
     
-    // Run animation
     runCartAnimation();
     
-    // Generate and show cart after animation
     setTimeout(() => {
         const matches = matchProductsForQuickShop();
         renderGeneratedCart(matches);
     }, 6000);
 }
 
-// Cart Animation
 function runCartAnimation() {
     const steps = ['anim1', 'anim2', 'anim3', 'anim4'];
     let current = 0;
@@ -247,25 +243,25 @@ function runCartAnimation() {
             const el = document.getElementById(id);
             if (!el) return;
             el.classList.remove('active', 'completed');
-            if (i === current) {
-                el.classList.add('active');
-            } else if (i < current) {
-                el.classList.add('completed');
-            }
+            if (i === current) el.classList.add('active');
+            else if (i < current) el.classList.add('completed');
         });
         
         current++;
-        if (current < steps.length) {
-            setTimeout(animate, 1500);
-        }
+        if (current < steps.length) setTimeout(animate, 1500);
     }
-    
     animate();
 }
 
-// Vision-Based Matching for Quick Shop
+// Fixed matching - filters by category
 function matchProductsForQuickShop() {
     let pool = [...PRODUCTS];
+    
+    // Filter by category
+    const selectedCats = quickShopPrefs.categories;
+    if (!selectedCats.includes('all')) {
+        pool = pool.filter(p => selectedCats.includes(p.category));
+    }
     
     // Filter by budget
     pool = pool.filter(p => p.price <= quickShopPrefs.budget * 1.5);
@@ -277,22 +273,28 @@ function matchProductsForQuickShop() {
             totalScore += product.scores[style] || 50;
         });
         const avgScore = totalScore / quickShopPrefs.styles.length;
-        
         return {...product, matchScore: Math.round(avgScore)};
     });
     
-    // Sort and take top 4
     return scored
         .filter(p => p.matchScore >= 60)
         .sort((a, b) => b.matchScore - a.matchScore)
         .slice(0, 4);
 }
 
-// Render generated cart
 function renderGeneratedCart(products) {
     document.getElementById('cartAnimation').classList.remove('active');
     const container = document.getElementById('generatedCart');
     container.innerHTML = '';
+    
+    if (products.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);">No items found. Try adjusting your filters.</div>';
+        container.classList.add('active');
+        document.getElementById('itemCount').textContent = '0';
+        document.getElementById('storeCount').textContent = '0';
+        document.getElementById('cartTotal').textContent = '$0';
+        return;
+    }
     
     let total = 0;
     const uniqueStores = new Set();
@@ -331,30 +333,23 @@ function renderGeneratedCart(products) {
     container.classList.add('active');
 }
 
-// Save Profile
 function saveProfile() {
-    // Get sizes
     userProfile.sizes = {
         tops: document.getElementById('savedSizeTops').value,
         bottoms: document.getElementById('savedSizeBottoms').value,
         shoes: document.getElementById('savedSizeShoes').value,
         outerwear: document.getElementById('savedSizeOuterwear').value
     };
-    
     localStorage.setItem('sa_profile', JSON.stringify(userProfile));
     closeProfileModal();
-    alert('Profile saved! Your preferences will be used for future carts.');
+    alert('Profile saved!');
 }
 
-// Load Profile
 function loadProfile() {
     const saved = localStorage.getItem('sa_profile');
-    if (saved) {
-        userProfile = JSON.parse(saved);
-    }
+    if (saved) userProfile = JSON.parse(saved);
 }
 
-// Render pre-curated carts
 function renderPreCarts() {
     const grid = document.getElementById('preCartsGrid');
     if (!grid) return;
@@ -379,12 +374,10 @@ function renderPreCarts() {
                 </div>
             </div>
         `;
-        
         grid.appendChild(card);
     });
 }
 
-// Load pre-curated cart
 function loadPreCuratedCart(cart) {
     const products = cart.productIds.map(id => {
         const product = PRODUCTS.find(p => p.id === id);
@@ -394,11 +387,9 @@ function loadPreCuratedCart(cart) {
     document.getElementById('demoCart').style.display = 'none';
     document.getElementById('cartAnimation').classList.remove('active');
     renderGeneratedCart(products);
-    
     document.querySelector('.cart-window').scrollIntoView({behavior: 'smooth'});
 }
 
-// Close modals on overlay click
 ['quickShopModal', 'profileModal'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', (e) => {
         if (e.target === e.currentTarget) {
@@ -409,5 +400,5 @@ function loadPreCuratedCart(cart) {
 });
 
 function showComingSoon() {
-    alert('Coming Soon! More styles added daily.');
+    alert('Coming Soon!');
 }
