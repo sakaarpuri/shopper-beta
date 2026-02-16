@@ -142,18 +142,54 @@ const PRODUCTS = [
         image: "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=300&h=300&fit=crop",
         cartUrl: "https://www.nike.com/dunk-low-panda",
         scores: {minimalist: 75, business: 20, casual: 90, luxury: 55, streetwear: 95, vintage: 60}
+    },
+    {
+        id: "everlane-womens-crew",
+        name: "The Organic Cotton Crew",
+        brand: "Everlane",
+        retailer: "Everlane",
+        price: 38,
+        category: "tops",
+        gender: "womens",
+        image: "https://images.unsplash.com/photo-1520975958225-6c2d81b6f0c4?w=300&h=300&fit=crop",
+        cartUrl: "https://everlane.com/products/womens-organic-cotton-crew",
+        scores: {minimalist: 92, business: 55, casual: 88, luxury: 45, streetwear: 55, vintage: 40}
+    },
+    {
+        id: "levis-womens-501",
+        name: "501 Original Jeans",
+        brand: "Levi's",
+        retailer: "Nordstrom",
+        price: 98,
+        category: "bottoms",
+        gender: "womens",
+        image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300&h=300&fit=crop",
+        cartUrl: "https://www.nordstrom.com/s/levis-501-original-jeans",
+        scores: {minimalist: 75, business: 40, casual: 92, luxury: 40, streetwear: 65, vintage: 85}
+    },
+    {
+        id: "adidas-samba-unisex",
+        name: "Samba Classic",
+        brand: "Adidas",
+        retailer: "Adidas",
+        price: 100,
+        category: "shoes",
+        gender: "unisex",
+        image: "https://images.unsplash.com/photo-1528701800489-20be3c17f07b?w=300&h=300&fit=crop",
+        cartUrl: "https://www.adidas.com/us/samba",
+        scores: {minimalist: 80, business: 35, casual: 90, luxury: 35, streetwear: 88, vintage: 70}
     }
 ];
 
 const PRE_CURATED_CARTS = [
     {
         id: "weekend-essentials",
-        name: "Women's Weekend Essentials",
-        description: "Easy, polished staples for casual plans.",
+        name: \"Women's Weekend Essentials\",
+        description: \"Easy, polished staples for casual plans.\",
         total: 236,
         items: 5,
         stores: 3,
-        productIds: ["everlane-womens-crew", "levis-womens-501", "adidas-samba-unisex"],
+        productIds: [\"everlane-womens-crew\", \"levis-womens-501\", \"adidas-samba-unisex\"],
         images: [
             "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=300&h=300&fit=crop",
             "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=300&h=300&fit=crop",
@@ -191,42 +227,4 @@ const PRE_CURATED_CARTS = [
             "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=300&h=300&fit=crop"
         ]
     }
-    ,
-    {
-        id: "everlane-womens-crew",
-        name: "The Organic Cotton Crew",
-        brand: "Everlane",
-        retailer: "Everlane",
-        price: 38,
-        category: "tops",
-        gender: "womens",
-        image: "https://images.unsplash.com/photo-1520975958225-6c2d81b6f0c4?w=300&h=300&fit=crop",
-        cartUrl: "https://everlane.com/products/womens-organic-cotton-crew",
-        scores: {minimalist: 92, business: 55, casual: 88, luxury: 45, streetwear: 55, vintage: 40}
-    },
-    {
-        id: "levis-womens-501",
-        name: "501 Original Jeans",
-        brand: "Levi's",
-        retailer: "Nordstrom",
-        price: 98,
-        category: "bottoms",
-        gender: "womens",
-        image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300&h=300&fit=crop",
-        cartUrl: "https://www.nordstrom.com/s/levis-501-original-jeans",
-        scores: {minimalist: 75, business: 40, casual: 92, luxury: 40, streetwear: 65, vintage: 85}
-    },
-    {
-        id: "adidas-samba-unisex",
-        name: "Samba Classic",
-        brand: "Adidas",
-        retailer: "Adidas",
-        price: 100,
-        category: "shoes",
-        gender: "unisex",
-        image: "https://images.unsplash.com/photo-1528701800489-20be3c17f07b?w=300&h=300&fit=crop",
-        cartUrl: "https://www.adidas.com/us/samba",
-        scores: {minimalist: 80, business: 35, casual: 90, luxury: 35, streetwear: 88, vintage: 70}
-    }
-
 ];
