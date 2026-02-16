@@ -82,6 +82,7 @@ function closeProfileModal() {
 }
 
 function toggleGender(el) {
+    console.log("Gender clicked:", el.dataset.gender);
     // Find which modal this element is in
     const inQuickShop = el.closest('#quickShopModal') !== null;
     const modalId = inQuickShop ? 'quickShopModal' : 'profileModal';
@@ -412,4 +413,5 @@ function loadPreCuratedCart(cart) {
 function showComingSoon() {
     alert('Coming Soon!');
 }
+
 
