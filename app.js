@@ -82,18 +82,18 @@ function closeProfileModal() {
 }
 
 function toggleGender(el) {
-    // Get parent modal
-    const modal = el.closest('.modal');
-    const isQuickShop = modal && modal.parentElement.id === 'quickShopModal';
+    if (!el) return;
+    try {
+    // Find which modal this element is in
+    const inQuickShop = el.closest('#quickShopModal') !== null;
+    const modalId = inQuickShop ? 'quickShopModal' : 'profileModal';
     
-    // Deselect all in this modal
-    modal.querySelectorAll('.gender-option').forEach(btn => btn.classList.remove('selected'));
-    
-    // Select clicked
+    // Remove selected from all gender options in that modal
+    document.querySelectorAll('#' + modalId + ' .gender-option').forEach(btn => btn.classList.remove('selected'));
     el.classList.add('selected');
     
-    // Save
-    if (isQuickShop) {
+    // Save to appropriate state
+    if (inQuickShop) {
         quickShopPrefs.gender = el.dataset.gender;
     } else {
         userProfile.gender = el.dataset.gender;
@@ -415,16 +415,3 @@ function showComingSoon() {
     alert('Coming Soon!');
 }
 
-
-
-
-
-// Event delegation for gender options (backup for inline onclick)
-document.addEventListener('click', function(e) {
-    const genderOption = e.target.closest('.gender-option');
-    if (genderOption) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleGender(genderOption);
-    }
-});
