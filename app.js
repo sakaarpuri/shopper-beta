@@ -1,6 +1,7 @@
 // ShopperAgent MVP v2
 
 const BETA_PASSWORD = 'shopper2026';
+const IMG_FALLBACK = 'https://images.unsplash.com/photo-1520975943522-8e2f1d3b9d2f?w=300&h=300&fit=crop';
 
 function checkPassword() {
     const input = document.getElementById('passwordInput').value;
@@ -314,7 +315,7 @@ function renderGeneratedCart(products) {
         const item = document.createElement('div');
         item.className = 'cart-item';
         item.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
+            <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null;this.src='${IMG_FALLBACK}';">
             <div class="cart-item-info">
                 <div class="cart-item-brand">${product.brand}</div>
                 <div class="cart-item-name">${product.name}</div>
@@ -368,7 +369,7 @@ function renderPreCarts() {
         card.onclick = () => loadPreCuratedCart(cart);
         
         const imagesHtml = cart.images.map((img, i) => 
-            `<div class="cart-img" style="${i === 0 ? 'grid-column:span 2;grid-row:span 2' : ''}"><img src="${img}"></div>`
+            `<div class="cart-img" style="${i === 0 ? 'grid-column:span 2;grid-row:span 2' : ''}"><img src="${img}" onerror="this.onerror=null;this.src='${IMG_FALLBACK}';"></div>`
         ).join('');
         
         card.innerHTML = `
