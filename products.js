@@ -191,10 +191,10 @@ const PRE_CURATED_CARTS = [
         stores: 3,
         productIds: ["everlane-womens-crew", "levis-womens-501", "adidas-samba-unisex"],
         images: [
-            "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=300&h=300&fit=crop",
-            "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=300&h=300&fit=crop",
-            "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=300&fit=crop",
-            "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop"
+            "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1520975867597-0d5f43ff1f12?w=300&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1528701800489-20be3c17f07b?w=300&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1520975682031-a5e0e2cf14c3?w=300&h=300&fit=crop"
         ]
     },
     {
