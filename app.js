@@ -417,3 +417,14 @@ function showComingSoon() {
 
 
 
+
+
+// Event delegation for gender options (backup for inline onclick)
+document.addEventListener('click', function(e) {
+    const genderOption = e.target.closest('.gender-option');
+    if (genderOption) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleGender(genderOption);
+    }
+});
