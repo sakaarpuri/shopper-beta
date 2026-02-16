@@ -1,4 +1,4 @@
-// ShopperAgent MVP v2 - With Quick Shop Flow (Fixed)
+// ShopperAgent MVP v2
 
 const BETA_PASSWORD = 'shopper2026';
 
@@ -81,28 +81,23 @@ function closeProfileModal() {
     document.getElementById('profileModal').classList.remove('active');
 }
 
+// GENDER - Simple toggle like categories
 function toggleGender(el) {
-    if (!el) return;
-    try {
-    // Find which modal this element is in
-    const inQuickShop = el.closest('#quickShopModal') !== null;
-    const modalId = inQuickShop ? 'quickShopModal' : 'profileModal';
+    // Check which modal is open
+    const inQuickShop = document.getElementById('quickShopModal').classList.contains('active');
     
-    // Remove selected from all gender options in that modal
-    document.querySelectorAll('#' + modalId + ' .gender-option').forEach(btn => btn.classList.remove('selected'));
+    // Remove selected from all gender options
+    document.querySelectorAll('.gender-option').forEach(btn => btn.classList.remove('selected'));
+    
+    // Add selected to clicked
     el.classList.add('selected');
     
-    // Save to appropriate state
+    // Save to state
     if (inQuickShop) {
         quickShopPrefs.gender = el.dataset.gender;
     } else {
         userProfile.gender = el.dataset.gender;
     }
-}
-
-function toggleProfileGender(el) {
-    // This function is no longer needed but keep for backwards compatibility
-    toggleGender(el);
 }
 
 function toggleCategory(el) {
@@ -144,12 +139,10 @@ function showSizeOptions() {
     } else if (quickShopPrefs.categories.includes('shoes')) {
         sizes = ['8', '9', '10', '11', '12', '13'];
         labelText = 'Select your shoe size';
-    } else {
-        section.style.display = 'none';
-        return;
     }
     
     label.textContent = labelText;
+    
     sizes.forEach(size => {
         const btn = document.createElement('div');
         btn.className = 'size-option';
@@ -229,7 +222,6 @@ function shopForMe() {
     
     closeQuickShop();
     
-    // Hide demo, reset summary, show animation
     document.getElementById('demoCart').style.display = 'none';
     document.getElementById('generatedCart').classList.remove('active');
     document.getElementById('generatedCart').innerHTML = '';
@@ -265,20 +257,16 @@ function runCartAnimation() {
     animate();
 }
 
-// Fixed matching - filters by category
 function matchProductsForQuickShop() {
     let pool = [...PRODUCTS];
     
-    // Filter by category
     const selectedCats = quickShopPrefs.categories;
     if (!selectedCats.includes('all')) {
         pool = pool.filter(p => selectedCats.includes(p.category));
     }
     
-    // Filter by budget
     pool = pool.filter(p => p.price <= quickShopPrefs.budget * 1.5);
     
-    // Score by style
     const scored = pool.map(product => {
         let totalScore = 0;
         quickShopPrefs.styles.forEach(style => {
@@ -414,4 +402,3 @@ function loadPreCuratedCart(cart) {
 function showComingSoon() {
     alert('Coming Soon!');
 }
-
