@@ -158,6 +158,8 @@
         .style-name{font-size:12px;font-weight:600;}
         .style-check{position:absolute;top:6px;right:6px;width:18px;height:18px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;opacity:0;transition:opacity 0.2s;}
         .style-option.selected .style-check{opacity:1;}
+        .gender-option:hover{border-color:var(--glass-border);}
+        .gender-option.selected{border-color:var(--accent);background:rgba(0,212,170,0.1);}
         
         .btn-generate{width:100%;padding:16px;background:var(--gradient);border:none;border-radius:12px;color:#000;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:8px;}
         .btn-generate:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--accent-glow);}
@@ -439,6 +441,25 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    <div class="gender-grid" style="display:flex;gap:12px;">
+                        <div class="gender-option" data-gender="mens" onclick="toggleGender(this)" style="flex:1;padding:16px;background:var(--glass);border:2px solid transparent;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.3s;">
+                            <div style="font-size:24px;margin-bottom:8px;">👨</div>
+                            <div style="font-size:13px;font-weight:600;">Mens</div>
+                        </div>
+                        <div class="gender-option" data-gender="womens" onclick="toggleGender(this)" style="flex:1;padding:16px;background:var(--glass);border:2px solid transparent;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.3s;">
+                            <div style="font-size:24px;margin-bottom:8px;">👩</div>
+                            <div style="font-size:13px;font-weight:600;">Womens</div>
+                        </div>
+                        <div class="gender-option" data-gender="unisex" onclick="toggleGender(this)" style="flex:1;padding:16px;background:var(--glass);border:2px solid transparent;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.3s;">
+                            <div style="font-size:24px;margin-bottom:8px;">👤</div>
+                            <div style="font-size:13px;font-weight:600;">Unisex</div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="form-group">
                     <label class="form-label">Categories</label>
                     <p class="form-sublabel">Select what you need (choose all that apply)</p>
                     <div class="category-grid">
@@ -546,6 +567,25 @@
                 <button class="modal-close" onclick="closeProfileModal()">×</button>
             </div>
             <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    <div class="gender-grid" style="display:flex;gap:12px;">
+                        <div class="gender-option" data-gender="mens" onclick="toggleGender(this)" style="flex:1;padding:16px;background:var(--glass);border:2px solid transparent;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.3s;">
+                            <div style="font-size:24px;margin-bottom:8px;">👨</div>
+                            <div style="font-size:13px;font-weight:600;">Mens</div>
+                        </div>
+                        <div class="gender-option" data-gender="womens" onclick="toggleGender(this)" style="flex:1;padding:16px;background:var(--glass);border:2px solid transparent;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.3s;">
+                            <div style="font-size:24px;margin-bottom:8px;">👩</div>
+                            <div style="font-size:13px;font-weight:600;">Womens</div>
+                        </div>
+                        <div class="gender-option" data-gender="unisex" onclick="toggleGender(this)" style="flex:1;padding:16px;background:var(--glass);border:2px solid transparent;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.3s;">
+                            <div style="font-size:24px;margin-bottom:8px;">👤</div>
+                            <div style="font-size:13px;font-weight:600;">Unisex</div>
+                        </div>
+                    </div>
+                </div>
+                
+                
                 <p style="color:var(--text-secondary);margin-bottom:24px;font-size:14px;">Save your preferences for faster shopping in the future. We'll remember your style, sizes, and favorite brands.</p>
                 
                 <div class="form-group">
@@ -661,3 +701,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
