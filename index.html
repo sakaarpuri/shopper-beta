@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopperAgent | AI Shopping Agent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#0a0a0f;--surface:rgba(255,255,255,0.04);--surface-hover:rgba(255,255,255,0.08);
+            --glass:rgba(255,255,255,0.05);--glass-border:rgba(255,255,255,0.1);
+            --text:#ffffff;--text-secondary:rgba(255,255,255,0.6);--text-muted:rgba(255,255,255,0.4);
+            --accent:#00d4aa;--accent-hover:#00b894;--accent-glow:rgba(0,212,170,0.3);
+            --gradient:linear-gradient(135deg,#00d4aa 0%,#00b894 100%);
+            --radius:20px;--radius-sm:12px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+        html{scroll-behavior:smooth}
+        body{background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+        body::before{
+            content:'';position:fixed;inset:0;
+            background:radial-gradient(ellipse at 80% 0%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 20% 100%,rgba(0,180,148,0.05) 0%,transparent 40%);
+            pointer-events:none;z-index:0;
+        }
+        .app{position:relative;z-index:1}
+        
+        .password-gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;}
+        .password-gate.hidden{display:none;}
+        .gate-box{text-align:center;max-width:400px;padding:40px;}
+        .gate-box .logo{font-size:28px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:32px;}
+        .gate-box h2{font-size:24px;margin-bottom:12px;}
+        .gate-box p{color:var(--text-secondary);margin-bottom:24px;font-size:14px;}
+        .gate-input{width:100%;padding:16px 20px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;color:var(--text);font-size:16px;text-align:center;margin-bottom:16px;}
+        .gate-input:focus{outline:none;border-color:var(--accent);}
+        .gate-btn{width:100%;padding:16px;background:var(--gradient);border:none;border-radius:12px;color:#000;font-size:16px;font-weight:700;cursor:pointer;}
+        .gate-error{color:#ff6b6b;font-size:13px;margin-top:12px;}
+        
+        .header{position:fixed;top:0;left:0;right:0;padding:16px 48px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--glass-border);background:rgba(10,10,15,0.9);backdrop-filter:blur(20px);z-index:100;}
+        .logo{font-size:20px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:10px;text-decoration:none;}
+        .logo-icon{width:32px;height:32px;background:var(--gradient);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;-webkit-text-fill-color:initial;color:#000;font-weight:800;}
+        .phase-badge{padding:6px 12px;background:rgba(0,212,170,0.15);border:1px solid var(--accent);border-radius:100px;font-size:11px;color:var(--accent);font-weight:600;}
+        .nav-links{display:flex;gap:32px}
+        .nav-link{color:var(--text-secondary);font-size:14px;text-decoration:none;transition:color 0.2s;cursor:pointer;}
+        .nav-link:hover{color:var(--text)}
+        
+        .hero{min-height:100vh;padding:120px 64px 80px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1400px;margin:0 auto;}
+        @media(max-width:1024px){.hero{grid-template-columns:1fr;gap:48px;padding:100px 32px 60px}}
+        
+        .hero-content{max-width:520px;}
+        .badge{display:inline-flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--glass-border);padding:8px 16px;border-radius:100px;font-size:12px;color:var(--accent);margin-bottom:20px;}
+        .badge-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+        h1{font-size:48px;font-weight:800;line-height:1.05;margin-bottom:16px;letter-spacing:-2px;}
+        h1 span{color:var(--accent)}
+        .hero-desc{font-size:16px;color:var(--text-secondary);margin-bottom:32px;line-height:1.6;}
+        
+        .hero-buttons{display:flex;flex-direction:column;gap:16px;}
+        .btn-primary-solid{padding:18px 36px;background:var(--gradient);border:none;border-radius:12px;color:#000;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 24px var(--accent-glow);text-decoration:none;display:inline-block;text-align:center;}
+        .btn-primary-solid:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow)}
+        .btn-text{padding:12px 24px;background:transparent;border:none;color:var(--text-secondary);font-size:14px;font-weight:500;cursor:pointer;text-decoration:underline;text-underline-offset:4px;transition:color 0.2s;display:inline-block;text-align:center;}
+        .btn-text:hover{color:var(--accent);}
+        
+        .retailers{margin-top:32px;}
+        .retailers-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+        .retailer-logos{display:flex;gap:12px;flex-wrap:wrap;}
+        .retailer-tag{padding:8px 14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;font-size:12px;color:var(--text-secondary);}
+        
+        .cart-window-wrapper{display:flex;justify-content:flex-end;}
+        @media(max-width:1024px){.cart-window-wrapper{justify-content:center}}
+        .cart-window{background:linear-gradient(180deg,var(--surface) 0%,rgba(255,255,255,0.02) 100%);border:1px solid var(--glass-border);border-radius:var(--radius);overflow:hidden;width:100%;max-width:420px;}
+        .cart-title-section{padding:20px 20px 12px;text-align:center;border-bottom:1px solid var(--glass-border);background:var(--glass);}
+        .cart-main-title{font-size:24px;font-weight:800;margin-bottom:4px;letter-spacing:-0.5px;}
+        .cart-subtitle{font-size:12px;color:var(--text-secondary);}
+        
+        .demo-cart{padding:16px 20px;display:block;}
+        .demo-label{text-align:center;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+        .demo-products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;}
+        .demo-product{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--glass);position:relative;}
+        .demo-product img{width:100%;height:100%;object-fit:cover;}
+        .demo-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.7) 0%,transparent 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:8px;}
+        .demo-brand{font-size:9px;color:var(--text-muted);text-transform:uppercase;}
+        .demo-name{font-size:11px;font-weight:600;}
+        .demo-price{font-size:12px;color:var(--accent);font-weight:700;}
+        
+        .cart-animation{padding:16px 20px;border-bottom:1px solid var(--glass-border);display:none;}
+        .cart-animation.active{display:block;}
+        .process-flow{display:flex;flex-direction:column;gap:8px;}
+        .process-step{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--glass);border-radius:10px;border-left:3px solid transparent;transition:all 0.4s;opacity:0.4;}
+        .process-step.active{border-left-color:var(--accent);background:rgba(0,212,170,0.1);opacity:1;}
+        .process-step.completed{border-left-color:var(--accent);opacity:0.7;}
+        .step-icon-small{width:28px;height:28px;background:var(--surface);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+        .step-text-small{flex:1}
+        .step-title-small{font-weight:600;font-size:13px;}
+        .step-desc-small{font-size:11px;color:var(--text-secondary);}
+        .step-status{width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;opacity:0;transition:opacity 0.3s;}
+        .process-step.completed .step-status{opacity:1;}
+        
+        .generated-cart{padding:16px 20px;display:none;}
+        .generated-cart.active{display:block;animation:fadeIn 0.4s ease;}
+        @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+        .cart-item{display:flex;gap:12px;padding:12px;background:var(--glass);border-radius:10px;margin-bottom:10px;border:1px solid transparent;transition:all 0.3s;}
+        .cart-item:hover{border-color:var(--accent);}
+        .cart-item img{width:60px;height:60px;object-fit:cover;border-radius:8px;}
+        .cart-item-info{flex:1;}
+        .cart-item-brand{font-size:10px;color:var(--text-muted);text-transform:uppercase;}
+        .cart-item-name{font-size:13px;font-weight:600;margin:2px 0;}
+        .cart-item-match{font-size:11px;color:var(--accent);font-weight:600;}
+        .cart-item-price{font-size:14px;font-weight:700;}
+        .cart-retailer-btn{display:block;width:100%;padding:10px;background:var(--surface);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);font-size:12px;text-align:center;text-decoration:none;margin-top:6px;transition:all 0.2s;}
+        .cart-retailer-btn:hover{background:var(--accent);border-color:var(--accent);color:#000;}
+        
+        .cart-summary{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--glass);border-top:1px solid var(--glass-border);}
+        .summary-info{display:flex;gap:20px}
+        .summary-stat{text-align:center}
+        .stat-value{font-size:18px;font-weight:800}
+        .stat-label{font-size:9px;color:var(--text-secondary);text-transform:uppercase;}
+        .summary-total{font-size:24px;font-weight:800;color:var(--accent);}
+        
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:200;}
+        .modal-overlay.active{display:flex;}
+        .modal{background:var(--surface);border:1px solid var(--glass-border);border-radius:var(--radius);width:90%;max-width:600px;max-height:85vh;overflow-y:auto;}
+        .modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--glass-border);}
+        .modal-header h2{font-size:20px;}
+        .modal-close{width:32px;height:32px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);font-size:18px;}
+        .modal-body{padding:24px;}
+        
+        .form-group{margin-bottom:24px;}
+        .form-label{display:block;font-size:14px;font-weight:600;margin-bottom:12px;}
+        .form-sublabel{font-size:12px;color:var(--text-muted);margin-bottom:12px;}
+        
+        .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+        @media(max-width:640px){.category-grid{grid-template-columns:repeat(2,1fr)}}
+        .category-option{position:relative;background:var(--glass);border:2px solid transparent;border-radius:var(--radius-sm);padding:20px 12px;text-align:center;cursor:pointer;transition:all 0.3s;}
+        .category-option:hover{border-color:var(--glass-border);}
+        .category-option.selected{border-color:var(--accent);background:rgba(0,212,170,0.1);}
+        .category-icon{font-size:28px;margin-bottom:8px;}
+        .category-name{font-size:13px;font-weight:600;}
+        .category-check{position:absolute;top:8px;right:8px;width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#000;opacity:0;transition:opacity 0.2s;}
+        .category-option.selected .category-check{opacity:1;}
+        
+        .size-grid{display:flex;flex-wrap:wrap;gap:10px;}
+        .size-option{padding:10px 20px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;font-size:13px;cursor:pointer;transition:all 0.2s;}
+        .size-option:hover{border-color:var(--text-secondary);}
+        .size-option.selected{background:var(--accent);border-color:var(--accent);color:#000;}
+        
+        .budget-display{text-align:center;font-size:24px;font-weight:800;color:var(--accent);margin-bottom:12px;}
+        .budget-slider{padding:10px 0;}
+        .budget-slider input{width:100%;-webkit-appearance:none;height:6px;background:var(--glass);border-radius:3px;outline:none;}
+        .budget-slider input::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--accent);border-radius:50%;cursor:pointer;}
+        .budget-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--text-secondary);}
+        
+        .style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+        @media(max-width:640px){.style-grid{grid-template-columns:repeat(2,1fr)}}
+        .style-option{position:relative;background:var(--glass);border:2px solid transparent;border-radius:var(--radius-sm);padding:16px 10px;text-align:center;cursor:pointer;transition:all 0.3s;}
+        .style-option:hover{border-color:var(--glass-border);}
+        .style-option.selected{border-color:var(--accent);background:rgba(0,212,170,0.1);}
+        .style-icon{font-size:22px;margin-bottom:6px;}
+        .style-name{font-size:12px;font-weight:600;}
+        .style-check{position:absolute;top:6px;right:6px;width:18px;height:18px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;opacity:0;transition:opacity 0.2s;}
+        .style-option.selected .style-check{opacity:1;}
+        
+        .btn-generate{width:100%;padding:16px;background:var(--gradient);border:none;border-radius:12px;color:#000;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:8px;}
+        .btn-generate:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--accent-glow);}
+        .phase-note{text-align:center;font-size:11px;color:var(--text-muted);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;}
+        .phase-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;}
+        
+        .section{padding:60px 48px;max-width:1200px;margin:0 auto;}
+        .section-header{text-align:center;margin-bottom:40px;}
+        .section-tag{display:inline-block;padding:6px 14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+        .section-title{font-size:28px;font-weight:800;margin-bottom:8px}
+        .section-desc{font-size:14px;color:var(--text-secondary);max-width:400px;margin:0 auto}
+        
+        .carts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+        @media(max-width:1024px){.carts-grid{grid-template-columns:1fr}}
+        .curated-cart{background:var(--surface);border:1px solid var(--glass-border);border-radius:var(--radius);overflow:hidden;transition:all 0.4s;cursor:pointer;}
+        .curated-cart:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 16px 48px rgba(0,212,170,0.12);}
+        .cart-images{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;aspect-ratio:16/10;}
+        .cart-img{overflow:hidden;}
+        .cart-img img{width:100%;height:100%;object-fit:cover;}
+        .cart-img:first-child{grid-column:span 2;grid-row:span 2}
+        .cart-info{padding:16px}
+        .cart-name{font-size:16px;font-weight:700;margin-bottom:4px}
+        .cart-desc{font-size:12px;color:var(--text-secondary);margin-bottom:12px;}
+        .cart-footer{display:flex;align-items:center;justify-content:space-between;}
+        .cart-items-count{font-size:11px;color:var(--text-muted)}
+        .cart-total-lg{font-size:22px;font-weight:800;color:var(--accent);}
+        
+        .inspiration-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+        @media(max-width:1024px){.inspiration-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:640px){.inspiration-grid{grid-template-columns:1fr}}
+        .inspiration-card{position:relative;aspect-ratio:3/4;border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;}
+        .inspiration-card img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s;}
+        .inspiration-card:hover img{transform:scale(1.1)}
+        .inspiration-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.9) 0%,transparent 70%);display:flex;flex-direction:column;justify-content:flex-end;padding:16px;}
+        .inspiration-tag{display:inline-block;padding:4px 10px;background:var(--accent);color:#000;border-radius:100px;font-size:10px;font-weight:700;width:fit-content;margin-bottom:8px;}
+        .inspiration-title{font-size:15px;font-weight:700;margin-bottom:2px}
+        .inspiration-count{font-size:11px;color:var(--text-secondary)}
+        
+        .cta-section{padding:60px 48px;text-align:center;}
+        .cta-box{max-width:600px;margin:0 auto;padding:36px 32px;background:linear-gradient(135deg,var(--surface) 0%,rgba(0,212,170,0.05) 100%);border:1px solid var(--glass-border);border-radius:var(--radius);position:relative;}
+        .cta-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gradient);border-radius:var(--radius) var(--radius) 0 0;}
+        .cta-box h2{font-size:24px;font-weight:800;margin-bottom:10px}
+        .cta-box p{color:var(--text-secondary);margin-bottom:24px;font-size:14px}
+        
+        .footer{padding:32px 48px;border-top:1px solid var(--glass-border);text-align:center;}
+        .footer-content{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+        .footer-logo{font-size:18px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .footer-links{display:flex;gap:28px}
+        .footer-link{color:var(--text-muted);font-size:13px;text-decoration:none;}
+    </style>
+</head>
+<body>
+    <!-- Password Gate -->
+    <div class="password-gate" id="passwordGate">
+        <div class="gate-box">
+            <div class="logo">ShopperAgent</div>
+            <h2>Private Beta Access</h2>
+            <p>This is an early preview. Enter the password to continue.</p>
+            <input type="password" class="gate-input" id="passwordInput" placeholder="Enter password">
+            <button class="gate-btn" onclick="checkPassword()">Continue</button>
+            <div class="gate-error" id="gateError"></div>
+        </div>
+    </div>
+
+    <div class="app" id="app" style="display:none;">
+        <header class="header">
+            <a href="#" class="logo" onclick="window.scrollTo(0,0);return false;">
+                <div class="logo-icon">SA</div>ShopperAgent
+            </a>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <span class="phase-badge">Phase 1: Beta</span>
+                <nav class="nav-links">
+                    <a href="#carts" class="nav-link">Pre-Curated</a>
+                    <a href="#inspiration" class="nav-link">Inspiration</a>
+                </nav>
+            </div>
+        </header>
+        
+        <section class="hero">
+            <div class="hero-content">
+                <div class="badge"><span class="badge-dot"></span>AI-Powered Shopping</div>
+                <h1><span>AI</span> That Chooses and Orders Clothes For You</h1>
+                <p class="hero-desc">Our AI analyzes thousands of products across 50+ retailers and builds your perfect cart based on your style, size, and budget.</p>
+                
+                <div class="hero-buttons">
+                    <button class="btn-primary-solid" onclick="openQuickShop()">What are you looking for?</button>
+                    <button class="btn-text" onclick="openProfileModal()">Create your profile (save for later)</button>
+                </div>
+                
+                <div class="retailers">
+                    <div class="retailers-label">Works with 50+ retailers</div>
+                    <div class="retailer-logos">
+                        <span class="retailer-tag">Nordstrom</span>
+                        <span class="retailer-tag">Everlane</span>
+                        <span class="retailer-tag">SSENSE</span>
+                        <span class="retailer-tag">Mr Porter</span>
+                        <span class="retailer-tag">Nike</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cart-window-wrapper">
+                <div class="cart-window">
+                    <div class="cart-title-section">
+                        <div class="cart-main-title">Your AI-Made Cart</div>
+                        <div class="cart-subtitle">Based on your style, size, budget</div>
+                    </div>
+                    
+                    <div class="demo-cart" id="demoCart">
+                        <div class="demo-label">Example Cart</div>
+                        <div class="demo-products">
+                            <div class="demo-product">
+                                <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200&h=200&fit=crop">
+                                <div class="demo-overlay">
+                                    <div class="demo-brand">Everlane</div>
+                                    <div class="demo-name">Oxford Shirt</div>
+                                    <div class="demo-price">$68</div>
+                                </div>
+                            </div>
+                            <div class="demo-product">
+                                <img src="https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?w=200&h=200&fit=crop">
+                                <div class="demo-overlay">
+                                    <div class="demo-brand">A.P.C.</div>
+                                    <div class="demo-name">Slim Chinos</div>
+                                    <div class="demo-price">$128</div>
+                                </div>
+                            </div>
+                            <div class="demo-product">
+                                <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=200&h=200&fit=crop">
+                                <div class="demo-overlay">
+                                    <div class="demo-brand">Common Projects</div>
+                                    <div class="demo-name">Achilles Low</div>
+                                    <div class="demo-price">$165</div>
+                                </div>
+                            </div>
+                            <div class="demo-product">
+                                <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200&h=200&fit=crop">
+                                <div class="demo-overlay">
+                                    <div class="demo-brand">Nike</div>
+                                    <div class="demo-name">Tech Fleece</div>
+                                    <div class="demo-price">$120</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cart-animation" id="cartAnimation">
+                        <div class="process-flow">
+                            <div class="process-step" id="anim1">
+                                <div class="step-icon-small">🎨</div>
+                                <div class="step-text-small">
+                                    <div class="step-title-small">Analyzing Style</div>
+                                    <div class="step-desc-small">Matching your preferences...</div>
+                                </div>
+                                <div class="step-status">✓</div>
+                            </div>
+                            <div class="process-step" id="anim2">
+                                <div class="step-icon-small">📏</div>
+                                <div class="step-text-small">
+                                    <div class="step-title-small">Finding Sizes</div>
+                                    <div class="step-desc-small">Checking availability...</div>
+                                </div>
+                                <div class="step-status">✓</div>
+                            </div>
+                            <div class="process-step" id="anim3">
+                                <div class="step-icon-small">💰</div>
+                                <div class="step-text-small">
+                                    <div class="step-title-small">Applying Budget</div>
+                                    <div class="step-desc-small">Filtering by price...</div>
+                                </div>
+                                <div class="step-status">✓</div>
+                            </div>
+                            <div class="process-step" id="anim4">
+                                <div class="step-icon-small">🔍</div>
+                                <div class="step-text-small">
+                                    <div class="step-title-small">Searching Stores</div>
+                                    <div class="step-desc-small">Scanning 12,847 items...</div>
+                                </div>
+                                <div class="step-status">✓</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="generated-cart" id="generatedCart"></div>
+                    
+                    <div class="cart-summary" id="cartSummary">
+                        <div class="summary-info">
+                            <div class="summary-stat">
+                                <div class="stat-value" id="itemCount">4</div>
+                                <div class="stat-label">Items</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="stat-value" id="storeCount">4</div>
+                                <div class="stat-label">Stores</div>
+                            </div>
+                        </div>
+                        <div class="summary-total" id="cartTotal">$481</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="carts">
+            <div class="section-header">
+                <div class="section-tag">Ready to Order</div>
+                <h2 class="section-title">Pre-Curated Carts</h2>
+                <p class="section-desc">AI-built looks for every occasion.</p>
+            </div>
+            <div class="carts-grid" id="preCartsGrid"></div>
+        </section>
+        
+        <section class="section" id="inspiration">
+            <div class="section-header">
+                <div class="section-tag">Discover</div>
+                <h2 class="section-title">Style Inspiration</h2>
+                <p class="section-desc">Explore curated looks.</p>
+            </div>
+            <div class="inspiration-grid">
+                <div class="inspiration-card" onclick="showComingSoon()">
+                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&h=600&fit=crop">
+                    <div class="inspiration-overlay">
+                        <span class="inspiration-tag">TRENDING</span>
+                        <div class="inspiration-title">Quiet Luxury</div>
+                        <div class="inspiration-count">24 carts</div>
+                    </div>
+                </div>
+                <div class="inspiration-card" onclick="showComingSoon()">
+                    <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400&h=600&fit=crop">
+                    <div class="inspiration-overlay">
+                        <span class="inspiration-tag">POPULAR</span>
+                        <div class="inspiration-title">Street Style</div>
+                        <div class="inspiration-count">18 carts</div>
+                    </div>
+                </div>
+                <div class="inspiration-card" onclick="showComingSoon()">
+                    <img src="https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=400&h=600&fit=crop">
+                    <div class="inspiration-overlay">
+                        <span class="inspiration-tag">WORK</span>
+                        <div class="inspiration-title">Modern Professional</div>
+                        <div class="inspiration-count">32 carts</div>
+                    </div>
+                </div>
+                <div class="inspiration-card" onclick="showComingSoon()">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop">
+                    <div class="inspiration-overlay">
+                        <span class="inspiration-tag">WEEKEND</span>
+                        <div class="inspiration-title">Casual Cool</div>
+                        <div class="inspiration-count">21 carts</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="cta-section">
+            <div class="cta-box">
+                <h2>Ready to Try It?</h2>
+                <p>Tell us what you're looking for and get your first AI-curated cart.</p>
+                <button class="btn-primary-solid" onclick="openQuickShop()">What are you looking for?</button>
+            </div>
+        </section>
+        
+        <footer class="footer">
+            <div class="footer-content">
+                <a href="#" class="footer-logo" onclick="window.scrollTo(0,0);return false;">ShopperAgent</a>
+                <div class="footer-links">
+                    <a href="#carts" class="footer-link">Pre-Curated</a>
+                    <a href="#inspiration" class="footer-link">Inspiration</a>
+                </div>
+                <span class="footer-copy">2026 ShopperAgent</span>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Quick Shop Modal -->
+    <div class="modal-overlay" id="quickShopModal">
+        <div class="modal">            <div class="modal-header">
+                <h2>What are you looking for?</h2>
+                <button class="modal-close" onclick="closeQuickShop()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Categories</label>
+                    <p class="form-sublabel">Select what you need (choose all that apply)</p>
+                    <div class="category-grid">
+                        <div class="category-option" data-cat="tops" onclick="toggleCategory(this)">
+                            <div class="category-check">✓</div>
+                            <div class="category-icon">👕</div>
+                            <div class="category-name">Tops</div>
+                        </div>
+                        <div class="category-option" data-cat="bottoms" onclick="toggleCategory(this)">
+                            <div class="category-check">✓</div>
+                            <div class="category-icon">👖</div>
+                            <div class="category-name">Bottoms</div>
+                        </div>
+                        <div class="category-option" data-cat="shoes" onclick="toggleCategory(this)">
+                            <div class="category-check">✓</div>
+                            <div class="category-icon">👟</div>
+                            <div class="category-name">Shoes</div>
+                        </div>
+                        <div class="category-option" data-cat="outerwear" onclick="toggleCategory(this)">
+                            <div class="category-check">✓</div>
+                            <div class="category-icon">🧥</div>
+                            <div class="category-name">Outerwear</div>
+                        </div>
+                        <div class="category-option" data-cat="accessories" onclick="toggleCategory(this)">
+                            <div class="category-check">✓</div>
+                            <div class="category-icon">🧢</div>
+                            <div class="category-name">Accessories</div>
+                        </div>
+                        <div class="category-option" data-cat="all" onclick="toggleCategory(this)">
+                            <div class="category-check">✓</div>
+                            <div class="category-icon">✨</div>
+                            <div class="category-name">Complete Look</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="sizeSection" style="display:none;">
+                    <label class="form-label">Your Size</label>
+                    <p class="form-sublabel" id="sizeLabel">Select your size</p>
+                    <div class="size-grid" id="sizeGrid">
+                        <!-- Sizes injected by JS -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Style</label>
+                    <p class="form-sublabel">What aesthetic are you going for?</p>
+                    <div class="style-grid">
+                        <div class="style-option" data-style="minimalist" onclick="toggleStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">⬜</div>
+                            <div class="style-name">Minimalist</div>
+                        </div>
+                        <div class="style-option" data-style="business" onclick="toggleStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">👔</div>
+                            <div class="style-name">Business</div>
+                        </div>
+                        <div class="style-option" data-style="casual" onclick="toggleStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">🌿</div>
+                            <div class="style-name">Casual</div>
+                        </div>
+                        <div class="style-option" data-style="streetwear" onclick="toggleStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">👟</div>
+                            <div class="style-name">Streetwear</div>
+                        </div>
+                        <div class="style-option" data-style="luxury" onclick="toggleStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">✨</div>
+                            <div class="style-name">Luxury</div>
+                        </div>
+                        <div class="style-option" data-style="vintage" onclick="toggleStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">🎩</div>
+                            <div class="style-name">Vintage</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Budget per item</label>
+                    <div class="budget-display" id="budgetDisplay">$100</div>
+                    <div class="budget-slider">
+                        <input type="range" min="25" max="500" value="100" step="25" id="budgetSlider" oninput="updateBudget(this.value)">
+                    </div>
+                    <div class="budget-labels">
+                        <span>$25</span>
+                        <span>$500+</span>
+                    </div>
+                </div>
+                
+                <button class="btn-generate" onclick="shopForMe()">Shop For Me</button>
+                <div class="phase-note"><span class="phase-dot"></span>Phase 1: Smart Recommendations + Quick Checkout</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal (Long-term) -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Create Your Profile</h2>
+                <button class="modal-close" onclick="closeProfileModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-secondary);margin-bottom:24px;font-size:14px;">Save your preferences for faster shopping in the future. We'll remember your style, sizes, and favorite brands.</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Your Style Personality</label>
+                    <p class="form-sublabel">Select all that describe you</p>
+                    <div class="style-grid">
+                        <div class="style-option" data-pstyle="minimalist" onclick="toggleProfileStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">⬜</div>
+                            <div class="style-name">Minimalist</div>
+                        </div>
+                        <div class="style-option" data-pstyle="business" onclick="toggleProfileStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">👔</div>
+                            <div class="style-name">Business</div>
+                        </div>
+                        <div class="style-option" data-pstyle="casual" onclick="toggleProfileStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">🌿</div>
+                            <div class="style-name">Casual</div>
+                        </div>
+                        <div class="style-option" data-pstyle="streetwear" onclick="toggleProfileStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">👟</div>
+                            <div class="style-name">Streetwear</div>
+                        </div>
+                        <div class="style-option" data-pstyle="luxury" onclick="toggleProfileStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">✨</div>
+                            <div class="style-name">Luxury</div>
+                        </div>
+                        <div class="style-option" data-pstyle="vintage" onclick="toggleProfileStyle(this)">
+                            <div class="style-check">✓</div>
+                            <div class="style-icon">🎩</div>
+                            <div class="style-name">Vintage</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Default Budget</label>
+                    <div class="budget-display" id="profileBudgetDisplay">$100</div>
+                    <div class="budget-slider">
+                        <input type="range" min="25" max="500" value="100" step="25" id="profileBudgetSlider" oninput="updateProfileBudget(this.value)">
+                    </div>
+                    <div class="budget-labels">
+                        <span>$25</span>
+                        <span>$500+</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Your Sizes</label>
+                    <p class="form-sublabel">We'll use these for all future carts</p>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+                        <div>
+                            <label style="font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;">Tops</label>
+                            <select id="savedSizeTops" style="width:100%;padding:10px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);">
+                                <option value="">Select...</option>
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;">Bottoms</label>
+                            <select id="savedSizeBottoms" style="width:100%;padding:10px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);">
+                                <option value="">Select...</option>
+                                <option value="28">28</option>
+                                <option value="30">30</option>
+                                <option value="32">32</option>
+                                <option value="34">34</option>
+                                <option value="36">36</option>
+                                <option value="38">38</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;">Shoes</label>
+                            <select id="savedSizeShoes" style="width:100%;padding:10px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);">
+                                <option value="">Select...</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;">Outerwear</label>
+                            <select id="savedSizeOuterwear" style="width:100%;padding:10px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);">
+                                <option value="">Select...</option>
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-generate" onclick="saveProfile()">Save My Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="products.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
