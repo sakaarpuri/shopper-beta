@@ -158,7 +158,9 @@
         .style-name{font-size:12px;font-weight:600;}
         .style-check{position:absolute;top:6px;right:6px;width:18px;height:18px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;opacity:0;transition:opacity 0.2s;}
         .style-option.selected .style-check{opacity:1;}
-        .gender-option{}.gender-option:hover{border-color:var(--glass-border);}
+        .gender-option{position:relative;z-index:1;pointer-events:auto;user-select:none;-webkit-tap-highlight-color:transparent;flex:1;padding:16px;background:var(--glass);border:2px solid transparent;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.3s;}
+        .gender-option *{pointer-events:none;}
+        .gender-option:hover{border-color:var(--glass-border);}
         .gender-option.selected{border-color:var(--accent);background:rgba(0,212,170,0.1);}
         
         .btn-generate{width:100%;padding:16px;background:var(--gradient);border:none;border-radius:12px;color:#000;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:8px;}
