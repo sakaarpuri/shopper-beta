@@ -87,7 +87,8 @@ function toggleGender(el) {
     const inQuickShop = document.getElementById('quickShopModal').classList.contains('active');
     
     // Remove selected from all gender options
-    document.querySelectorAll('.gender-option').forEach(btn => btn.classList.remove('selected'));
+    const modalScope = inQuickShop ? '#quickShopModal' : '#profileModal';
+    document.querySelectorAll(modalScope + ' .gender-option').forEach(btn => btn.classList.remove('selected'));
     
     // Add selected to clicked
     el.classList.add('selected');
@@ -259,6 +260,11 @@ function runCartAnimation() {
 
 function matchProductsForQuickShop() {
     let pool = [...PRODUCTS];
+
+    // Gender filter (mens/womens include unisex; unisex allows all)
+    if (quickShopPrefs.gender && quickShopPrefs.gender !== 'unisex') {
+        pool = pool.filter(p => p.gender === quickShopPrefs.gender || p.gender === 'unisex');
+    }
     
     const selectedCats = quickShopPrefs.categories;
     if (!selectedCats.includes('all')) {
