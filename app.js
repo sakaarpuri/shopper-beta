@@ -82,15 +82,25 @@ function closeProfileModal() {
 }
 
 function toggleGender(el) {
-    document.querySelectorAll('#quickShopModal .gender-option').forEach(btn => btn.classList.remove('selected'));
+    // Find which modal this element is in
+    const inQuickShop = el.closest('#quickShopModal') !== null;
+    const modalId = inQuickShop ? 'quickShopModal' : 'profileModal';
+    
+    // Remove selected from all gender options in that modal
+    document.querySelectorAll('#' + modalId + ' .gender-option').forEach(btn => btn.classList.remove('selected'));
     el.classList.add('selected');
-    quickShopPrefs.gender = el.dataset.gender;
+    
+    // Save to appropriate state
+    if (inQuickShop) {
+        quickShopPrefs.gender = el.dataset.gender;
+    } else {
+        userProfile.gender = el.dataset.gender;
+    }
 }
 
 function toggleProfileGender(el) {
-    document.querySelectorAll('#profileModal .gender-option').forEach(btn => btn.classList.remove('selected'));
-    el.classList.add('selected');
-    userProfile.gender = el.dataset.gender;
+    // This function is no longer needed but keep for backwards compatibility
+    toggleGender(el);
 }
 
 function toggleCategory(el) {
@@ -402,3 +412,4 @@ function loadPreCuratedCart(cart) {
 function showComingSoon() {
     alert('Coming Soon!');
 }
+
